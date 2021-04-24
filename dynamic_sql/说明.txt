@@ -1,0 +1,7 @@
+动态sql，所谓动态sql，本质还是sql语句，只是我们在sql层面，去执行逻辑代码。根据不同的条件生成不同的sql语句
+if语句
+choose，when，otherwise语句，相当于是switch，case，default
+where标签
+set标签
+sql片段实现代码的复用
+foreach标签

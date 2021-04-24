@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--1.mybatis配置映射文件位置必须与IUserDao.java的结构相同-->
+<!--2.namespace的值为接口的全限定类名-->
+<mapper namespace="dao.IUserDao">
+    <insert id="addUser" parameterType="domain.User">
+        insert into user (id, username, birthday, sex, address)
+        VALUES (#{id}, #{username}, #{birthday}, #{sex}, #{address})
+    </insert>
+    
+    <!--IF语句-->
+    <select id="getUserIf" parameterType="map" resultType="domain.User">
+        select * from user where 1=1
+        <!--如果传入的map中username不为空，则添加一个查询条件-->
+        <if test="username != null">
+            and username=#{username}
+        </if>
+        <if test="address != null">
+            and address like #{address}
+        </if>
+    </select>
+
+    <!--Where语句-->
+    <select id="getUserWhere" parameterType="map" resultType="domain.User">
+        select * from user
+        <where>
+            <!--上述if语句需要1=1，如果没有1=1，则多出了一个and会报错，where标签会自动去除多出的and-->
+            <if test="username != null">
+                and username=#{username}
+            </if>
+            <if test="address != null">
+                and address like #{address}
+            </if>
+        </where>
+    </select>
+    
+    <!--choose, when, otherwise
+        只会添加第一个符合条件的作为查询，和switch case非常像-->
+    <select id="getUserChoose" parameterType="map" resultType="domain.User">
+        select * from user
+        <where>
+            <choose>
+                <when test="username != null">
+                    username = #{username}
+                </when>
+                <when test="address != null">
+                    and address like #{address}
+                </when>
+                <otherwise>
+                    and id = #{id}
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+    
+    <!--set语句-->
+    <update id="updateUserSet" parameterType="map">
+        update user
+        <set>
+            <!--如果传入的map中username不为空，则添加一个查询条件-->
+            <if test="username != null">
+                <!--这个逗号不能丢，丢了会报错，因为这里是多个条件，当只有这一个条件时，set会自动帮你去掉-->
+                username=#{username},
+            </if>
+            <if test="address != null">
+                address=#{address}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+
+    <!--有的时候，我们会将一些功能的部分抽取出来，方便复用
+        1.使用sql片段(sql标签)抽取出公共部分
+        2.在需要使用的地方使用include标签引用即可
+
+        最好基于单表来定义sql片段，因为sql片段是复用的，多表的查询会让程序整体变得更加复杂
+        sql片段内不要存在where标签-->
+    <sql id="part">
+        <!--如果传入的map中username不为空，则添加一个查询条件-->
+        <if test="username != null">
+            and username=#{username}
+        </if>
+        <if test="address != null">
+            and address like #{address}
+        </if>
+    </sql>
+
+    <select id="getUserSql" parameterType="map" resultType="domain.User">
+        select * from user where 1=1
+        <include refid="part"/>
+    </select>
+
+
+    <!--foreach标签
+        SELECT *
+        FROM POST P
+        WHERE ID in
+        <foreach item="item" index="index" collection="list"
+              open="(" separator="," close=")">
+                  #{item}
+        </foreach>
+
+        你可以将任何可迭代对象（如 List、Set 等）、Map 对象或者数组对象作为集合参数传递给 foreach。collection即为所要传递的集合变量
+        当使用可迭代对象或者数组时，index 是当前迭代的序号，item 的值是本次迭代获取到的元素。当使用 Map 对象（或者 Map.Entry 对象的集合）时，index 是键，item 是值。
+        -->
+    <select id="getUserForeach" parameterType="map" resultType="domain.User">
+        select * from user
+        <where>
+            <if test="ids!=null and ids.size() > 0">
+                id in
+                <foreach collection="ids" item="id"
+                         open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+</mapper>

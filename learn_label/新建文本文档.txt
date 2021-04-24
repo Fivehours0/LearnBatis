@@ -1,0 +1,4 @@
+介绍了properties标签: 从外部的配置文件引入配置信息
+typeAlias标签: 配置别名，可以给实体类起别名
+注解的方式起别名: 在User类上边加上@Alias("hello")，将User类起别名为hello，注解可以搭配package标签来使用
+resultType标签: 表中列名和实体类的属性名称不一致时

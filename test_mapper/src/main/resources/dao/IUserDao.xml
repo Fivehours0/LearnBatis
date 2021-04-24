@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--1.mybatis配置映射文件位置必须与IUserDao.java的结构相同-->
+<!--2.namespace的值为接口的全限定类名-->
+<mapper namespace="dao.IUserDao">
+    <!--配置查询所有-->
+    <!--3.id属性必须是dao接口的方法名-->
+    <!--遵循以上3点无需实现dao的实现类-->
+    <!--resultType表示将返回的结果封装到user类中-->
+    <update id="updateUser" parameterType="map">
+        update user set username=#{userName} where id=#{id}
+    </update>
+</mapper>

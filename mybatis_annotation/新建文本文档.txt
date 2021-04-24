@@ -1,0 +1,3 @@
+mabatis基于注解的入门案例
+@Select
+@Param

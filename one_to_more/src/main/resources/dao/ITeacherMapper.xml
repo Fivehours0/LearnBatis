@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dao.ITeacherMapper">
+    <!--按照结果嵌套的方式-->
+<!--    <select id="getById" resultMap="st" parameterType="int">-->
+<!--        select t.id as tid, t.name as tname, s.id as sid, s.name as sname, s.tid as stid-->
+<!--        from teacher as t, student as s-->
+<!--        where t.id = #{id} and t.id = s.tid-->
+<!--    </select>-->
+
+<!--    <resultMap id="st" type="domain.Teacher">-->
+<!--        <id property="id" column="tid"/>-->
+<!--        <result property="name" column="tname"/>-->
+<!--        &lt;!&ndash;ofType获取集合类中泛型的类型&ndash;&gt;-->
+<!--        <collection property="students" ofType="domain.Student">-->
+<!--            <result property="id" column="sid"/>-->
+<!--            <result property="name" column="sname"/>-->
+<!--            <result property="tid" column="stid"/>-->
+<!--        </collection>-->
+<!--    </resultMap>-->
+
+
+    <!--按照查询嵌套处理-->
+    <select id="getById" resultMap="st" parameterType="int">
+        select * from teacher where id=#{id}
+    </select>
+
+    <resultMap id="st" type="domain.Teacher">
+        <result property="id" column="id"/>
+        <!--column作为参数传递给子查询了-->
+        <collection property="students" ofType="domain.Student" select="getAllStudent" column="id"/>
+    </resultMap>
+
+    <select id="getAllStudent" resultType="domain.Student">
+        select * from student where tid=#{tid}
+    </select>
+
+</mapper>

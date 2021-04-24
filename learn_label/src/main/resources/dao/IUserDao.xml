@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--1.mybatis配置映射文件位置必须与IUserDao.java的结构相同-->
+<!--2.namespace的值为接口的全限定类名-->
+<mapper namespace="dao.IUserDao">
+    <!--配置查询所有-->
+    <!--3.id属性必须是dao接口的方法名-->
+    <!--遵循以上3点无需实现dao的实现类-->
+    <!--resultType表示将返回的结果封装到user类中-->
+
+
+    <!-- 如果数据库中的列名称和user类中的属性名称不对应，则会出现结果无法封装入user类的问题(mysql不区分大小写)
+        解决方法:
+            1. 起别名，select语句改成select id as userId from user
+            2. 配置查询结果列名和实体类的属性名的对应关系,并将resultType属性改成resultMap属性-->
+<!--    <resultMap id="user" type="domain.User">-->
+<!--        &lt;!&ndash;主键对应&ndash;&gt;-->
+<!--        <id property="userId" column="id"/>-->
+<!--        &lt;!&ndash;非主键对应&ndash;&gt;-->
+<!--        <result property="userName" column="name"/>-->
+<!--    </resultMap>-->
+    
+    <select id="findAll" resultType="domain.User">
+        select * from user
+    </select>
+
+    <insert id="saveUser" parameterType="domain.User">
+        insert into user (id, username, birthday, sex, address) values (#{id}, #{username}, #{birthday}, #{sex},
+                                                                        #{address})
+    </insert>
+
+    <update id="updateUser" parameterType="domain.User">
+        update user set username=#{username}, birthday=#{birthday}, sex=#{sex}
+    </update>
+
+    <delete id="deleteUser" parameterType="int">
+        delete from user where id = #{userId}
+    </delete>
+
+    <select id="findById" parameterType="int" resultType="domain.User">
+        select * from user where id = #{userId}
+    </select>
+
+    <select id="getTotalCount" resultType="int">
+        select count(*) from user
+    </select>
+
+    <!--定义查询类查询表中的数据-->
+    <select id="findUserByVo" resultType="domain.User" parameterType="domain.QueryVo">
+        select * from user where username like #{user.username}
+    </select>
+</mapper>
